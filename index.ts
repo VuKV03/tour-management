@@ -3,6 +3,8 @@ import dotenv from "dotenv";
 import bodyParser from "body-parser";
 import moment from "moment";
 import clientRoutes from "./routes/client/index.route";
+import adminRoutes from "./routes/admin/index.route";
+import { systemConfig } from "./config/system";
 
 dotenv.config();
 
@@ -21,6 +23,11 @@ app.locals.moment = moment;
 
 //Client Routes
 clientRoutes(app);
+
+app.locals.prefixAdmin = systemConfig.prefixAdmin;
+
+// Admin
+adminRoutes(app);
 
 app.listen(port, () => {
   console.log(`App listening on port ${port}`);
