@@ -10,7 +10,7 @@ const drawCart = () => {
     .then((res) => res.json())
     .then((data) => {
       const tours = data.tours;
-  
+
       const htmlArray = tours.map((item, index) => {
         return `
             <tr>
@@ -52,7 +52,7 @@ const drawCart = () => {
       });
       const listTour = document.querySelector("[list-tour]");
       listTour.innerHTML = htmlArray.join("");
-  
+
       const totalPrice = tours.reduce((sum, item) => sum + item.total, 0);
       const elementTotalPrice = document.querySelector("[total-price]");
       elementTotalPrice.innerHTML = totalPrice.toLocaleString();
@@ -63,47 +63,47 @@ const drawCart = () => {
 
       updateQuantityInCart();
     });
-}
+};
 // End Vẽ tour ra giao diện
 
-// Xóa sản phẩm trong giỏ hàng 
+// Xóa sản phẩm trong giỏ hàng
 const deleteItemInCart = () => {
   const listBtnDelete = document.querySelectorAll("[btn-delete]");
-  if(listBtnDelete.length > 0) {
-    listBtnDelete.forEach(button => {
+  if (listBtnDelete.length > 0) {
+    listBtnDelete.forEach((button) => {
       button.addEventListener("click", () => {
         const tourId = button.getAttribute("btn-delete");
         const cart = JSON.parse(localStorage.getItem("cart"));
-        const newCart = cart.filter(item => item.tourId != tourId);
+        const newCart = cart.filter((item) => item.tourId != tourId);
         localStorage.setItem("cart", JSON.stringify(newCart));
 
         drawCart();
-      })
-    })
+      });
+    });
   }
-}
-// Xóa sản phẩm trong giỏ hàng 
+};
+// Xóa sản phẩm trong giỏ hàng
 
 // Cập nhật số lượng trong giỏ hàng
 const updateQuantityInCart = () => {
   const listInputQuantity = document.querySelectorAll("input[name='quantity']");
-  if(listInputQuantity.length > 0) {
-    listInputQuantity.forEach(input => {
+  if (listInputQuantity.length > 0) {
+    listInputQuantity.forEach((input) => {
       input.addEventListener("change", () => {
         const quantity = input.value;
         const tourId = input.getAttribute("item-id");
 
         const cart = JSON.parse(localStorage.getItem("cart"));
-        const tourUpdate = cart.find(item => item.tourId == tourId);
-        if(tourUpdate) {
+        const tourUpdate = cart.find((item) => item.tourId == tourId);
+        if (tourUpdate) {
           tourUpdate.quantity = quantity;
           localStorage.setItem("cart", JSON.stringify(cart));
           drawCart();
         }
-      })
+      });
     });
   }
-}
+};
 // Hết Cập nhật số lượng trong giỏ hàng
 
 // Hiển thị data ra giỏ hàng
@@ -112,7 +112,7 @@ drawCart();
 
 // Đặt tour
 const formOrder = document.querySelector("[form-order]");
-if(formOrder) {
+if (formOrder) {
   formOrder.addEventListener("submit", (event) => {
     event.preventDefault();
 
@@ -126,22 +126,27 @@ if(formOrder) {
       info: {
         fullName: fullName,
         phone: phone,
-        note: note
+        note: note,
       },
-      cart: cart
+      cart: cart,
     };
 
     fetch("/order", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify(dataFinal)
+      body: JSON.stringify(dataFinal),
     })
-      .then(res => res.json())
-      .then(data => {
-        console.log(data);
-      })
-  })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.code == 200) {
+          localStorage.setItem("cart", JSON.stringify([]));
+          window.location.href = `/order/success?orderCode=${data.orderCode}`;
+        } else {
+          alert("Đặt hàng không thành công!");
+        }
+      });
+  });
 }
 // Hết Đặt tour
