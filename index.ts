@@ -5,6 +5,7 @@ import moment from "moment";
 import clientRoutes from "./routes/client/index.route";
 import adminRoutes from "./routes/admin/index.route";
 import { systemConfig } from "./config/system";
+import path from "path";
 
 dotenv.config();
 
@@ -22,6 +23,13 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 // App Local Variables
 app.locals.moment = moment;
+
+// TinyMCE
+app.use(
+  "/tinymce",
+  express.static(path.join(__dirname, "node_modules", "tinymce"))
+);
+// End TinyMCE
 
 //Client Routes
 clientRoutes(app);
