@@ -18,6 +18,8 @@ app.use(express.static("public"));
 app.set("views", "./views");
 app.set("view engine", "pug");
 
+app.use(bodyParser.urlencoded({ extended: false }));
+
 // App Local Variables
 app.locals.moment = moment;
 
